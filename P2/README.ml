@@ -1,6 +1,6 @@
-# Machine Learning Engineer Nanodegree Program
+#Machine Learning Engineer Nanodegree Program
 
-## Dog breed classifier using CNN
+##Dog breed classifier using CNN
 
 This part of the repository contains the following:
  - A proposal to the dog breed classifier project
