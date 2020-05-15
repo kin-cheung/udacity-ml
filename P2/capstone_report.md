@@ -75,11 +75,10 @@ A crop of random size (default: of 0.08 to 1.0) of the original size and a rando
  - Crop to a fixed size of 56x56 pixels
  - Horizontally flip randomly with a 0.5 probability
  
-In addition, since the classes in the dataset are slightly imbalanced, I will make use of a weighted random sampler in PyTorch to sample the training data in random with weights that are calculated for each available class in the pre-processing stage. The purpose of this pre-processing is to slightly balance out the class imbalances. The class dritribution after the pre-processing will look like this.
+From the chart below, it also shows us that there are 133 classes in total and different number of images contained for each class. In addition, since the classes in the dataset are slightly imbalanced, I will make use of a weighted random sampler in PyTorch to sample the training data in random with weights that are calculated for each available class in the pre-processing stage. The purpose of this pre-processing is to slightly balance out the class imbalances. The class dritribution after the pre-processing will look like this. 
 
 ![Class imbalances](images/class_imbalances.png)
 
-From the chart above, it also shows us that there are 133 classes in total and that is what we need to define in the outer layer of CNN when we model the probability of each class.
 
 ### Exploratory Visualization
 In this section, you will need to provide some form of visualization that summarizes or extracts a relevant characteristic or feature about the data. The visualization should adequately support the data being used. Discuss why this visualization was chosen and how it is relevant. Questions to ask yourself when writing this section:
@@ -87,13 +86,6 @@ In this section, you will need to provide some form of visualization that summar
 - _Is the visualization thoroughly analyzed and discussed?_
 - _If a plot is provided, are the axes, title, and datum clearly defined?_
 
-With image transformation pipeline chosen, here we can see a random batch in the training set actually looks like. A batch contains 4 images which have been pre-processed using the transformation pipeline described in the previous section. Each of the pre-processed image is now in a size of 56x56 pixels.
- 
-![pre-processed training samples](images/pre_processed_training_samples.png)
-
-After applying a random weighted sampler to the image loader with a ramdomised transformation pipeline, we have come to a more balanced class distributions as shown below.
-
-![Class balances better](images/class_balances_better.png)
 
 ### Algorithms and Techniques
 In this section, you will need to discuss the algorithms and techniques you intend to use for solving the problem. You should justify the use of each one based on the characteristics of the problem and the problem domain. Questions to ask yourself when writing this section:
@@ -101,12 +93,33 @@ In this section, you will need to discuss the algorithms and techniques you inte
 - _Are the techniques to be used thoroughly discussed and justified?_
 - _Is it made clear how the input data or datasets will be handled by the algorithms and techniques chosen?_
 
+There are a few functionalities that we will need to build the final application.
+1. A human classifier
+2. A dog classifier
+3. A dog breed classifier
+
+### Human classifier
+We will use an existing Haar feature-based human face classifier to detect human faces. It takes an image and can detect human faces in the image and also provide their x and y coordinates it.
+
+### Dog classifier
+To detect dogs, we will use a pre-trained VGG-16 model. VGG-16 is one of the variations of VGG and it is the final best VGG network that contains 16 CONV/FC layers. As we can quote from this website (https://cs231n.github.io/convolutional-networks/):
+
+> **VGGNet**. The runner-up in ILSVRC 2014 was the network from Karen Simonyan and Andrew Zisserman that became known as the VGGNet. Its main contribution was in showing that the depth of the network is a critical component for good performance. Their final best network contains 16 CONV/FC layers and, appealingly, features an extremely homogeneous architecture that only performs 3x3 convolutions and 2x2 pooling from the beginning to the end.
+
+### Dog breed classifier
+For dog breed classifier, we will use a pre-trained ResNet model. ResNet is one of the best performed image recognition models out there that the public can make use of.
+
+> **ResNet**. Residual Network developed by Kaiming He et al. was the winner of ILSVRC 2015. It features special skip connections and a heavy use of batch normalization.
+The architecture is also missing fully connected layers at the end of the network. The reader is also referred to Kaiming’s presentation (video, slides), and some recent experiments that reproduce these networks in Torch. ResNets are currently by far state of the art Convolutional Neural Network models and
 
 ### Benchmark
 In this section, you will need to provide a clearly defined benchmark result or threshold for comparing across performances obtained by your solution. The reasoning behind the benchmark (in the case where it is not an established result) should be discussed. Questions to ask yourself when writing this section:
 - _Has some result or value been provided that acts as a benchmark for measuring performance?_
 - _Is it clear how this result or value was obtained (whether by data or by hypothesis)?_
 
+A simple CNN was built from scratch as a benchmark. This simple CNN model was trained using the training dataset provided after some data pre-processing and validated against a dedeicated set of validation data.
+
+This simple CNN was trained a relatively smaller feature set which was 56x56 pixeled images as inputs with 3 channels of RGB. The architecture consisted of 4 CONV-ReLU-POOL layers to provide reasonably good performance and did not take too much computer memory and time to train.
 
 ## III. Methodology
 _(approx. 3-5 pages)_
@@ -116,6 +129,15 @@ In this section, all of your preprocessing steps will need to be clearly documen
 - _If the algorithms chosen require preprocessing steps like feature selection or feature transformations, have they been properly documented?_
 - _Based on the **Data Exploration** section, if there were abnormalities or characteristics that needed to be addressed, have they been properly corrected?_
 - _If no preprocessing is needed, has it been made clear why?_
+
+
+With image transformation pipeline chosen, here we can see a random batch in the training set actually looks like. A batch contains 4 images which have been pre-processed using the transformation pipeline described in the previous section. Each of the pre-processed image is now in a size of 56x56 pixels.
+ 
+![pre-processed training samples](images/pre_processed_training_samples.png)
+
+After applying a random weighted sampler to the image loader with a ramdomised transformation pipeline, we have come to a more balanced class distributions as shown below.
+
+![Class balances better](images/class_balances_better.png)
 
 ### Implementation
 In this section, the process for which metrics, algorithms, and techniques that you implemented for the given data will need to be clearly documented. It should be abundantly clear how the implementation was carried out, and discussion should be made regarding any complications that occurred during this process. Questions to ask yourself when writing this section:
