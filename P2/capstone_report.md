@@ -38,7 +38,7 @@ In this section, you will need to clearly define the metrics or calculations you
 - _Are the metrics you’ve chosen to measure the performance of your models clearly discussed and defined?_
 - _Have you provided reasonable justification for the metrics chosen based on the problem and solution?_
 
-The evaluation metric that I chose to use is a log loss metric, precisely a cross entropy loss function. I will use that in the vanilla CNN model that I am going to build. Since the task that we have here is a classification task, that means I am going to use activation functions to model probabilities in the output layer of the CNN. In addition, cross entropy is also an ideal option for handling class imbalances as it is exactly the case here with our training dataests that we will look at in the next section when we discuss about data exploration and my findings.
+The evaluation metric that I will use is a log loss metric, precisely a cross entropy loss function. I will use that in the vanilla CNN model that I am going to build. Since the task that we have here is a classification task, that means I am going to use activation functions to model probabilities in the output layer of the CNN. In addition, cross entropy is an ideal option for handling class imbalances as it is exactly the case here with our training dataests that we will look at in the next section when we discuss about data exploration and my findings.
 
 ## II. Analysis
 _(approx. 2-4 pages)_
@@ -50,7 +50,36 @@ In this section, you will be expected to analyze the data you are using for the 
 - _If a dataset is **not** present for this problem, has discussion been made about the input space or input data for your problem?_
 - _Are there any abnormalities or characteristics about the input space or dataset that need to be addressed? (categorical variables, missing values, outliers, etc.)_
 
+The datasets that I am going to use are provided by Udacity and they can be downloaded here https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/dogImages.zip. They are in RGB JPEG format separated into different folders by dog breeds and further divided into training, validation and test sets. Arbitrary images will also be used at the end of the project to test out the final application. The images will include dogs, humans and neither of both.
+
+From the graph below, we can see that the images provided are in different sizes. The green and blue line represent width and height of the images in the datasets, respectively. 
+
+![Image size distributions](images/image_size_distributions.png)
+
+Also we can see that majority of the images are between 320 to 480 H x W pixels. In order to feed the images to our models as inputs, we need to resize them uniformly and since the dimensions of the images basically represent features, we need to choose a size that could maintain reasonably good performance and not consume too much memory and computer resources. Thus, I will resize the images to relatively smaller sizes around 32x32 to 56x56 which are around 1/10 of the original sizes so that the training process will not be too overwhelming.
+
+I also randomly selected a few images to see what they actually looked like. I came to realise that the subjects that we are interested in each image are positioned differently and so are the compostions. Because of these characteristics, having fixed cropping positions did not seem to be a good idea and I deicded to go with random cropping, which could possibly land better positioned images on average.
+
+![Random samples](images/sample_1.png)
+![Random samples](images/sample_2.png)
+![Random samples](images/sample_3.png)
+![Random samples](images/sample_4.png)
+![Random samples](images/sample_5.png)
+
+In order to make the most out of the given training dataset, when I import the training dataset, I will perform the following transformations to the images so that I can produce more variations out of them.
+
+A crop of random size (default: of 0.08 to 1.0) of the original size and a random aspect ratio (default: of 3/4 to 4/3) of the original aspect ratio is made. This crop is finally resized to given size.
+
+ - A crop of random size of 0.08 to 1.0 of the original size
+ - A random aspect ratio of 3/4 to 4/3 of the original aspect ratio
+ - Crop to a fixed size of 56x56 pixels
+ - Horizontally flip randomly with a 0.5 probability
+ 
+In addition, since the classes in the dataset are slightly imbalanced, I will make use of a weighted random sampler in PyTorch to sample the training data in random with weights that are calculated for each available class in the pre-processing stage. The purpose of this pre-processing is to slightly balance out the class imbalances. The class dritribution after the pre-processing will look like this.
+
 ![Class imbalances](images/class_imbalances.png)
+
+From the chart above, it also shows us that there are 133 classes in total and that is what we need to define in the outer layer of CNN when we model the probability of each class.
 
 ### Exploratory Visualization
 In this section, you will need to provide some form of visualization that summarizes or extracts a relevant characteristic or feature about the data. The visualization should adequately support the data being used. Discuss why this visualization was chosen and how it is relevant. Questions to ask yourself when writing this section:
@@ -58,9 +87,13 @@ In this section, you will need to provide some form of visualization that summar
 - _Is the visualization thoroughly analyzed and discussed?_
 - _If a plot is provided, are the axes, title, and datum clearly defined?_
 
-![Class imbalances](images/image_size_distributions.png)
+With image transformation pipeline chosen, here we can see a random batch in the training set actually looks like. A batch contains 4 images which have been pre-processed using the transformation pipeline described in the previous section. Each of the pre-processed image is now in a size of 56x56 pixels.
+ 
+![pre-processed training samples](images/pre_processed_training_samples.png)
 
-![Class imbalances](images/random_samples.png)
+After applying a random weighted sampler to the image loader with a ramdomised transformation pipeline, we have come to a more balanced class distributions as shown below.
+
+![Class balances better](images/class_balances_better.png)
 
 ### Algorithms and Techniques
 In this section, you will need to discuss the algorithms and techniques you intend to use for solving the problem. You should justify the use of each one based on the characteristics of the problem and the problem domain. Questions to ask yourself when writing this section:
@@ -68,7 +101,6 @@ In this section, you will need to discuss the algorithms and techniques you inte
 - _Are the techniques to be used thoroughly discussed and justified?_
 - _Is it made clear how the input data or datasets will be handled by the algorithms and techniques chosen?_
 
-![Class imbalances](images/class_balances_better.png)
 
 ### Benchmark
 In this section, you will need to provide a clearly defined benchmark result or threshold for comparing across performances obtained by your solution. The reasoning behind the benchmark (in the case where it is not an established result) should be discussed. Questions to ask yourself when writing this section:
