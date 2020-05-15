@@ -23,9 +23,14 @@ Image classification/recognition has been a very popular and challenging rsearch
 
 Although, computers have become a lot more powerful over the past decades, and that is how some of the state-of-the-art models have come to life, this problem domain is still full of challenages and require a lot of our attentions. Nevertheless, image classifications and recognitions have many useful applications and have been helping us as humans in many areas that some of them can even save lives.
 
-Dog breed classification is a small area of the whole image recognition domain. Although, our end application is not going to be a very helpful application in any means and even kill a few brain cells of the users while lauging too hard, the obstacles and problems there that we are trying to solve are real and do apply to many similar image classification tasks as well.
+Dog breed classification is a small area of the whole image recognition domain. Although, our end application is not going to be a very helpful application in any means and might even kill a few brain cells of the users while laughing too hard, the obstacles and problems that we are trying to solve here are very relevant and can apply to many similar image classification tasks as well.
 
 Classifying dog breeds is not as easy as it sounds, even to human eyes. Even if a human has come to learn all of the dog breeds, some of the dog breeds just look too similar, and some dog breeds even come with different colors and sizes. Sometimes for a human to correctly identify them, they will even need to hear them, watch their movements and phyiscally touch them.
+
+Labrador retrievers in 3 different color variations:
+black| brown | yellow
+------------ | ------------- | -------------
+![black](images/Labrador_retriever_06449.jpg) | ![brown](images/Labrador_retriever_06455.jpg) | ![yellow](images/Labrador_retriever_06457.jpg)
 
 So for a computer to be able to correctly classifying dog breeds, it is an incredibly difficult task. Although, computers can recognise patterns and colors relatively easily, classifying dog breeds is clearly on another difficulty level.
 
@@ -93,24 +98,11 @@ In this section, you will need to discuss the algorithms and techniques you inte
 - _Are the techniques to be used thoroughly discussed and justified?_
 - _Is it made clear how the input data or datasets will be handled by the algorithms and techniques chosen?_
 
-There are a few functionalities that we will need to build the final application.
-1. A human classifier
-2. A dog classifier
-3. A dog breed classifier
+I will be using cross entropy loss function as the loss function in building the vanilla CNN from scratch. Since what we have in hand is a typical classification task that we are using activation functions to model probabilities in the outer layer of the CNN. Futhermore, our training dataset has slight class imbalances, although, we will also make use of a random weighted sampler to smooth out the imbalances, cross entropy is still a very solid choice in this case.
 
-### Human classifier
-We will use an existing Haar feature-based human face classifier to detect human faces. It takes an image and can detect human faces in the image and also provide their x and y coordinates it.
+As for the graident descent function, I will be using stochastic gradient descent (SGD) with momentum factor of 0.9. Momentum factor has an important role in deep learning such as in a CNN as stated here. http://www.cs.toronto.edu/%7Ehinton/absps/momentum.pdf.
 
-### Dog classifier
-To detect dogs, we will use a pre-trained VGG-16 model. VGG-16 is one of the variations of VGG and it is the final best VGG network that contains 16 CONV/FC layers. As we can quote from this website (https://cs231n.github.io/convolutional-networks/):
-
-> **VGGNet**. The runner-up in ILSVRC 2014 was the network from Karen Simonyan and Andrew Zisserman that became known as the VGGNet. Its main contribution was in showing that the depth of the network is a critical component for good performance. Their final best network contains 16 CONV/FC layers and, appealingly, features an extremely homogeneous architecture that only performs 3x3 convolutions and 2x2 pooling from the beginning to the end.
-
-### Dog breed classifier
-For dog breed classifier, we will use a pre-trained ResNet model. ResNet is one of the best performed image recognition models out there that the public can make use of.
-
-> **ResNet**. Residual Network developed by Kaiming He et al. was the winner of ILSVRC 2015. It features special skip connections and a heavy use of batch normalization.
-The architecture is also missing fully connected layers at the end of the network. The reader is also referred to Kaiming’s presentation (video, slides), and some recent experiments that reproduce these networks in Torch. ResNets are currently by far state of the art Convolutional Neural Network models and
+In term of the CNN architecture, it will be covered in detail in the implementation section.
 
 ### Benchmark
 In this section, you will need to provide a clearly defined benchmark result or threshold for comparing across performances obtained by your solution. The reasoning behind the benchmark (in the case where it is not an established result) should be discussed. Questions to ask yourself when writing this section:
@@ -145,11 +137,33 @@ In this section, the process for which metrics, algorithms, and techniques that 
 - _Were there any complications with the original metrics or techniques that required changing prior to acquiring a solution?_
 - _Was there any part of the coding process (e.g., writing complicated functions) that should be documented?_
 
+After I had tried a number of CNN achitectures with unsatisfactory results, I finally setted with an achitecutre that could satisty the computer memory and GPU memory constraints as well as time constraints that had.
+
+The final CNN architecture is illustrated here 
+`INPUT -> (CONV -> ReLU -> POOL) * 4 -> (FC -> ReLU -> Dropout) * 2 -> FC`
+
+1. The input was a 56x56x3 (WxHxC) feature map. I chose this size because it was small enough to train quickly and fit in the GPU memory available. At the same time, the feature set was big enough to maintain the level of details of the original features.
+2. The input layer was immediately followed by four layers of CONV layer to allow the model to learn in greater details since dog breeds do differ in some very subtle ways. For each CONV layer, as I had learnt from VGG's implementation, I deicded to go with a kernel size of 3, a stride size of 1 to keep every detail in the feature map and a zero padding of 1 to avoid details around the boundaries being washed out. I began with a receptive field of size 32, 64, 128 and ended with 256 to keep the memory footprint as small as possible and at the same time keep up with the depth of learning.
+3. I added a RELU activation layer after each CONV layer to speed up the training time
+4. A RELU layer was then followed by a POOL layer of kernel size 2 and stride of 2 to reduce feature map size and at the same time maintened the performance as doing so.
+5. After 4 CONV-ReLU-POOL cycles, 2 consecutive fully connected layers were used to reduce the dimensions from (256 x 7 x 7) nodes to 4096. A dropout layer after each FC layer was added to reduce overfitting. The whole network was concluded with a final output layer of 133 nodes as defined as the number of classes in the training dataset.
+6. In addition, an adaptive average pool was added after the CONV-ReLU-POOL loops to reduce overlapping in pooling.
+
 ### Refinement
 In this section, you will need to discuss the process of improvement you made upon the algorithms and techniques you used in your implementation. For example, adjusting parameters for certain models to acquire improved solutions would fall under the refinement category. Your initial and final solutions should be reported, as well as any significant intermediate results as necessary. Questions to ask yourself when writing this section:
 - _Has an initial solution been found and clearly reported?_
 - _Is the process of improvement clearly documented, such as what techniques were used?_
 - _Are intermediate and final solutions clearly reported as the process is improved?_
+
+Deciding on the CNN achitecture and parameters as well as the size of the input feature map appeared to be quite a challenge in terms of the computer resources and time constraints. I started with an image size of 32x32 of a batch size of 4 to begin with. I had a very shallow network with only 1-2 CONV-ReLU-POOL layers. 
+
+At some points, the learning rate was set too high. At a result, the training loss and the validation loss were not descrasing. After it had been changed to 0.01, the training loss and the validation loss started to show positive signs and were decreasing after each epoch as expected. However, the initial models performed very pooly with the test loss being very high. Even increasing the number of epochs did not seem to be able improve the performance at all and it started to show some sign of overfitting as the validation loss and test loss were very extreme. 
+
+After the initial unsatisfactory results, I started to try out different parameter combinations that include the input image size, the batch size, the kernal size, the stride size, the zero-padding size, the number of CONV layers with/without pooling layers, the sizes of the FC layers, the learning rate as well as the number of epochs.
+
+At one point, I thought the input image sizes were too small, but after I had increased the image size to 112x122 and even 244x244, the model performance did not improve at all and the training time had become too lengthy. As the image size increased, so did the memory usage, the process started to cause out of memory errors, and then I decided to change the focus on the architecture of the CNN.
+
+At the begnning, I thought that having a deep network could be an overkill. However, as it turned out a too shallow network just could not make the cuts at all either. As dog breed classification as stated in the problem statement is a complicated matter, I needed a deep enough network for a model to have enough features to learn from.
 
 
 ## IV. Results
@@ -162,12 +176,37 @@ In this section, the final model and any supporting qualities should be evaluate
 - _Is the model robust enough for the problem? Do small perturbations (changes) in training data or the input space greatly affect the results?_
 - _Can results found from the model be trusted?_
 
+The final version of the CNN architecture was a network with 4-CONV layers followed by 3-FC layers as described in detail in the implementation section.
+
+The final evaluation process was carried out using a dedicated test set that was separated from the rest of the training and validation dataset from the beginning. Each image in the test data was properly labeled and the predicted results from our model were compared against the truth labels.
+
+A final percentage in accuracy after all images in the test set were tested against. We did not aim to beat any of the state-of-the-art CNN models, but we wanted to have a model that can at least be able to predict 10% of the test data correctly. Since we had 133 classes with 836 images in the test set in total, a random guess could only result in a less than 1% accuracy.
+
+As we can see from this test run, we were able to predict 88 out of the total test images correctly. That was slightly more than 10%.
+
+> Training Loss: 4.057460 	Validation Loss: 3.781314
+>
+> Test Loss: 3.947899
+> 
+> Test Accuracy: 10% (88/836)
+
 ### Justification
 In this section, your model’s final solution and its results should be compared to the benchmark you established earlier in the project using some type of statistical analysis. You should also justify whether these results and the solution are significant enough to have solved the problem posed in the project. Questions to ask yourself when writing this section:
 - _Are the final results found stronger than the benchmark result reported earlier?_
 - _Have you thoroughly analyzed and discussed the final solution?_
 - _Is the final solution significant enough to have solved the problem?_
 
+The final CNN dog breed classifier solution was built using transfer learning and I chose to use a pretrained model from ResNet. The architecture of the CNN was a simple fully-connected layer with 133 nodes to denote as many classes after the trained features from ResNet. The training dataset, the validation dataset and the test dataest were identical to the datasets that were used for the vanilla CNN model as the benchmark.
+
+As it turned out, the CNN model trained using transfer learning of a pretrained model from ResNet easily out-performed the benchmark vanilla model after being trained for 10 epochs. Here is a batch of randomly selected training images.
+
+![Random samples](images/random_samples.png)
+
+The test result was very impressive. It was able to correctly classify over 80% of the dog breeds in the test set.
+
+> Test Loss: 0.746416
+> 
+> Test Accuracy: 81% (683/836)
 
 ## V. Conclusion
 _(approx. 1-2 pages)_
