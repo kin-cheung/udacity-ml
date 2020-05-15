@@ -217,27 +217,35 @@ In this section, you will need to provide some form of visualization that emphas
 - _Is the visualization thoroughly analyzed and discussed?_
 - _If a plot is provided, are the axes, title, and datum clearly defined?_
 
+At the beginning of this porject, we promised an application of a dog breed classifier that can tell us if a given image is an iamge of a dog or a human. Here are the results from our not-so-useful dog creed classifier application.
+
+The comments above the images are the results of the classifier application.
+ - When a dog is identified, it will say 'hello doggy, you are a ' followed by the classified dog breed name
+ - When a human is identified, it will say 'are you a human or a ' following by the the dog breed reassembling the human
+ - When neither is identified, it will say 'what are you?'
+
+|what are you?|are you a human or a Pharaoh hound?|what are you?|
+|-|-|-|
+|![](images/test_1.png)|![](images/test_2.png)|![](images/test_3.png)|
+
+|hello doggy, you are a  Neapolitan mastiff|hello doggy, you are a  American eskimo dog|are you a human or a Dogue de bordeaux?|
+|-|-|-|
+|![](images/test_4.png)|![](images/test_5.png)|![](images/test_6.png)|
+
 ### Reflection
-In this section, you will summarize the entire end-to-end problem solution and discuss one or two particular aspects of the project you found interesting or difficult. You are expected to reflect on the project as a whole to show that you have a firm understanding of the entire process employed in your work. Questions to ask yourself when writing this section:
-- _Have you thoroughly summarized the entire process you used for this project?_
-- _Were there any interesting aspects of the project?_
-- _Were there any difficult aspects of the project?_
-- _Does the final model and solution fit your expectations for the problem, and should it be used in a general setting to solve these types of problems?_
+
+As we can here see from our human eyes, classifiying dog breeds is not an easy task by any means. Even though, we have the technologies, such as CNN, to train models that can classify dog breeds very well, but being able to train such powerful models takes tremandous amount of man-brain hours, computer-brain power and time.
+
+In the vanilla CNN model that we used as the benchmark was itself already a reasonably sophisticated piece of technology and so much technology was involved, it was only able to classify slightly over 10% of the test images correctly. Can we image how much that went into preparing and training one of the state-of-the-art CNN models, like ResNet and VGG net? That is just mindblowing.
 
 ### Improvement
-In this section, you will need to provide discussion as to how one aspect of the implementation you designed could be improved. As an example, consider ways your implementation can be made more general, and what would need to be modified. You do not need to make this improvement, but the potential solutions resulting from these changes are considered and compared/contrasted to your current solution. Questions to ask yourself when writing this section:
-- _Are there further improvements that could be made on the algorithms or techniques you used in this project?_
-- _Were there algorithms or techniques you researched that you did not know how to implement, but would consider using if you knew how?_
-- _If you used your final solution as the new benchmark, do you think an even better solution exists?_
 
------------
+The final solution of the dog breed classifier was much better than I had expected. It did not expect that image recognition has gone this far and there are models out there can be used to classify such difficult tasks such as dog breeds. As I have heard Professor Andrew Ng said it in his famous ML course that the most challenging part of machine learning is to have the resources to get a good volumn of training data with labels and the future endless computing power to train models. 
 
-**Before submitting, ask yourself. . .**
+There are just a lot for me to discover to give any improvement over I have done so far. I did not know anything about CNN before this project and came to this project with almost a completely blank sheet. I have done literally everything that I could do at this stage to make it run with the memory and time contraints and have it performed reasonably well within expectations.
 
-- Does the project report you’ve written follow a well-organized structure similar to that of the project template?
-- Is each section (particularly **Analysis** and **Methodology**) written in a clear, concise and specific fashion? Are there any ambiguous terms or phrases that need clarification?
-- Would the intended audience of your project be able to understand your analysis, methods, and results?
-- Have you properly proof-read your project report to assure there are minimal grammatical and spelling mistakes?
-- Are all the resources used for this project correctly cited and referenced?
-- Is the code that implements your solution easily readable and properly commented?
-- Does the code execute without error and produce results similar to those reported?
+I could still think of some possible improvements that I know of in term of my current knowledge.
+
+1. Better ways to handle data imbalancing in training datasets. I wanted to know if they are other ways. Is using log loss the ultimate solution?
+2. Better ways to augment training datasets so that I could get better variations and make the best use of training datasets in hand.
+3. Stack more CONV layers before pooling in the first layer to get better learning results I guess.
